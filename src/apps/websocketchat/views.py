@@ -6,7 +6,7 @@ from .models import ChatSession
 from .serializers import ChatSessionSerializer
 
 
-class ChatSessionList(generics.ListCreateAPIView):
+class ChatSessionListView(generics.ListCreateAPIView):
 	serializer_class = ChatSessionSerializer
 	permission_class = [permissions.IsAuthenticated]
 

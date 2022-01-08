@@ -1,5 +1,4 @@
 import uuid
-from datetime import datetime, timedelta
 from django.contrib.auth.models import (
 	AbstractBaseUser, BaseUserManager, PermissionsMixin
 )
@@ -34,6 +33,7 @@ class UserManager(BaseUserManager):
 			raise ValueError('Superuser must have is_superuser=True')
 
 		return self._create_user(username, email, password, **extra_fields)
+
 
 class User(AbstractBaseUser, PermissionsMixin):
 	id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)

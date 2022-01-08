@@ -14,8 +14,9 @@ class Profile(models.Model):
 	image = models.ImageField(default=None, upload_to='profiles/', blank=True, null=True)
 	github = models.CharField(max_length=255, blank=True, null=True)
 	linkedin = models.CharField(max_length=255, blank=True, null=True)
-	date_joined = models.DateTimeField(default=timezone.now, editable=False)
-	follows = models.ManyToManyField('self', related_name='followed_by', symmetrical=False)
+	last_updated = models.DateTimeField(auto_now=True)
+	date_joined = models.DateTimeField(auto_now_add=True, editable=False)
+	follows = models.ManyToManyField('self', related_name='followed_by', symmetrical=False, blank=True)
 
 	def __str__(self):
 		return self.user.username
