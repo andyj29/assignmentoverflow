@@ -3,7 +3,7 @@ from .models import ChatSession, Message
 
 
 class MessageSerializer(serializers.ModelSerializer):
-	sender = serializers.HyperlinkedRelatedField(read_only=True, view_name='user_detail')
+	sender = serializers.HyperlinkedRelatedField(read_only=True, view_name='v1:auth:user_detail', lookup_url_kwarg='user_id')
 
 	class Meta:
 		model = Message
@@ -11,8 +11,8 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 class ChatSessionSerializer(serializers.ModelSerializer):
-	initiator = serializers.HyperlinkedRelatedField(read_only=True, view_name='user_detail')
-	receiver = serializers.HyperlinkedRelatedField(read_only=True, view_name='user_detail')
+	initiator = serializers.HyperlinkedRelatedField(read_only=True, view_name='v1:auth:user_detail', lookup_url_kwarg='user_id')
+	receiver = serializers.HyperlinkedRelatedField(read_only=True, view_name='v1:auth:user_detail', lookup_url_kwarg='user_id')
 	session_messages = MessageSerializer(many=True, read_only=True)
 
 	class Meta:
