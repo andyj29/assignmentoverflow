@@ -13,6 +13,8 @@ class RegistrationView(generics.CreateAPIView):
 class UserListView(generics.ListAPIView):
 	permission_classes = (permissions.IsAdminUser,)
 	serializer_class = UserSerializer
+	search_fields = ['username', 'email']
+	filter_backends = (filters.SearchFilter,)
 
 	def get_queryset(self):
 		return User.objects.all()
