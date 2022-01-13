@@ -30,10 +30,10 @@ class Network(models.Model):
 		return False
 
 
-class ConnectRequest(models.Models):
+class ConnectRequest(models.Model):
 	id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
-	sender = models.ForeignKey('authentication.User', related_name='connect_requests', editable=False)
-	receiver = models.ForeignKey('authentication.User', related_name='connect_invites', editable=False)
+	sender = models.ForeignKey('authentication.User', related_name='connect_requests', on_delete=models.CASCADE)
+	receiver = models.ForeignKey('authentication.User', related_name='connect_invites', on_delete=models.CASCADE)
 	is_active = models.BooleanField(default=True)
 	timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -55,5 +55,12 @@ class ConnectRequest(models.Models):
 	def cancel(self):
 		self.is_active = False
 
+
+class ConnectNotification(models.Model):
+	type = models.CharField(default='connect request', max_length=255)
+	receiver = models.ForeignKey('authentication.User', related_name='notifications', on_delete=models.CASCADE)
+	is_read = models.BooleanField(default=False)
+	initiated_by = models.ForeignKey('authentication.User', on_delete=models.CASCADE)
+	timestamp = models.DateTimeField(auto_now_add=True)
 
 

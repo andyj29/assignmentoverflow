@@ -16,8 +16,7 @@ class Profile(models.Model):
 	linkedin = models.CharField(max_length=255, blank=True, null=True)
 	last_updated = models.DateTimeField(auto_now=True)
 	date_joined = models.DateTimeField(auto_now_add=True, editable=False)
-	follows = models.ManyToManyField('self', related_name='followed_by', symmetrical=False, blank=True)
-
+	
 	def __str__(self):
 		return self.user.username
 
