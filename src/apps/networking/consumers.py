@@ -1,15 +1,14 @@
 import json
 
 from channels.db import database_sync_to_async
-from channels.generic.websocketchat import AsyncJsonWebSocketConsumer
-from src.apps.authentication.models import User
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.core import serializers
 
 from .models import ConnectNotification
 from .serializers import ConnectNotificationSerializer
 
 
-class ConnectNotificationConsumer(AsyncJsonWebSocketConsumer):
+class ConnectNotificationConsumer(AsyncJsonWebsocketConsumer):
 
 	@database_sync_to_async
 	def fetch_notifications(self):
@@ -17,7 +16,7 @@ class ConnectNotificationConsumer(AsyncJsonWebSocketConsumer):
 		notifications = ConnectNotification.objects.filter(receiver=user, type='connect request').select_related('initiated_by')
 		serializer = ConnectNotificationSerializer(notifications, many=True)
 		content = {
-			'command': 'notifications'
+			'command': 'notifications',
 			'notifications': json.dumps(serializer.data)
 		}
 
@@ -53,5 +52,5 @@ class ConnectNotificationConsumer(AsyncJsonWebSocketConsumer):
 
 	async def receive(self, text_data=None, bytes_data=None, **kwargs):
 		data = json.loads(text_data)
-		if data['command'] = 'fetch_connect_notifications':
+		if data['command'] == 'fetch_connect_notifications':
 			await self.fetch_notifications()
