@@ -58,7 +58,6 @@ class SendRequestView(views.APIView):
 					'notification': json.dumps(ConnectNotificationSerializer(notification).data, cls=DjangoJSONEncoder),
 				}
 			)
-			print(json.dumps(ConnectNotificationSerializer(notification).data, cls=DjangoJSONEncoder))
 			data = {
 				'status': True,
 				'message': 'Success',

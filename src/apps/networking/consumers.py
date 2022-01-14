@@ -1,4 +1,3 @@
-import json
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
 
@@ -17,9 +16,10 @@ class ConnectNotificationConsumer(AsyncJsonWebsocketConsumer):
 
 	async def notify(self, event):
 		notification = event['notification']
-		await self.send(text_data=json.dumps({
-				 'notification': notification
-			})
+		await self.send_json(
+			{
+				'notification': notification,
+			}
 		)
 
 	
