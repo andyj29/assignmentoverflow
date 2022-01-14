@@ -20,7 +20,16 @@ class MyNetworkDetailView(generics.RetrieveAPIView):
 		return obj
 
 
-class MyConnectRequestListView(generics.ListAPIView):
+class NetworkDetailView(generics.RetrieveAPIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	serializer_class = NetworkSerializer
+
+	def get_object(self):
+		obj = get_object_or_404(Network, id=self.kwargs['network_id'])
+		return obj
+
+
+class MyConnectRequestListCreateView(generics.ListCreateAPIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	serializer_class = ConnectRequestSerializer
 
@@ -28,8 +37,26 @@ class MyConnectRequestListView(generics.ListAPIView):
 		queryset = ConnectRequest.objects.filter(sender=self.request.user)
 		return queryset
 
+	def post(self, request, *args, **kwargs):
+		receiver = get_object_or_404(User, username=self.request.data['username'])
+		request = ConnectRequest.objects.create(sender=self.request.user, receiver=receiver)
+		notification = ConnectNotification.objects.create(type='connect-request', receiver=receiver, initiated_by=self.request.user)
+		channel_layer = get_channel_layer()
+		receiver_group = f'notifications_{receiver.username}'
+		async_to_sync(channel_layer.group_send)(
+			receiver_group, {
+				'type': 'notify',
+				'notification': json.dumps(ConnectNotificationSerializer(notification).data,cls=DjangoJSONEncoder),
+			}
+		)
+		data = {
+			'status': 'Success',
+			'message': 'Request has been sent',
+		}
+		return JsonResponse(data)
 
-class MyConnectInviteListView(generics.ListAPIView):
+
+class MyConnectInviteListAcceptView(generics.ListCreateAPIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	serializer_class = ConnectRequestSerializer
 
@@ -37,47 +64,13 @@ class MyConnectInviteListView(generics.ListAPIView):
 		queryset = ConnectRequest.objects.filter(receiver=self.request.user)
 		return queryset
 
-
-class SendRequestView(views.APIView):
-	permission_class = (permissions.IsAuthenticated,)
-
 	def post(self, request, *args, **kwargs):
-		receiver_username = self.kwargs['receiver_username']
-		if receiver_username is not None:
-			receiver = get_object_or_404(User, username=receiver_username)
-			request = ConnectRequest.objects.create(sender=self.request.user, receiver=receiver)
-			notification = ConnectNotification.objects.create(type='connect-request', receiver=receiver, initiated_by=self.request.user)
-			channel_layer = get_channel_layer()
-			channel = f'notifications_{receiver.username}'
-			async_to_sync(channel_layer.group_send)(
-				channel, {
-					'type': 'notify',
-					'notification': json.dumps(ConnectNotificationSerializer(notification).data, cls=DjangoJSONEncoder),
-				}
-			)
-			data = {
-				'status': True,
-				'message': 'Success',
-			}
-			return JsonResponse(data)
-
-
-class AcceptRequestView(views.APIView):
-	permission_classes = (permissions.IsAuthenticated,)
-
-	def post(self, request, *args, **kwargs):
-		sender_username = self.kwargs['sender_username']
-		if sender_username is not None:
-			sender = get_object_or_404(User, username=sender_username)
-			request = ConnectRequest.objects.filter(sender=sender, receiver=self.request.user, is_active=True).first()
-			request.accept()
-			request.is_active = False
-			request.save()
-			ConnectNotification.objects.filter(receiver=self.request.user, initiated_by=sender).delete()
-			data = {
-				'status': True,
-				'message': 'Success'
-			}
-			return JsonResponse(data)
-
-
+		sender = get_object_or_404(User, username=self.request.data['username'])
+		request = ConnectRequest.objects.filter(sender=sender, receiver=self.request.user, is_active=True).first()
+		request.accept()
+		ConnectNotification.objects.filter(receiver=self.request.user, initiated_by=sender).delete()
+		data = {
+			'status': 'Success',
+			'message': 'Invite has been accepted',
+		}
+		return JsonResponse(data)

@@ -7,11 +7,11 @@ from .models import User
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 	self = serializers.HyperlinkedIdentityField(view_name='v1:auth:user_detail', lookup_url_kwarg='user_id')
 	profile = serializers.HyperlinkedRelatedField(view_name='v1:resources:profiles:profile_detail', read_only=True, lookup_url_kwarg='profile_id')
-	network = serializers.HyperlinkedRelatedField(view_name='v1:networking:network_detail', read_only=True, lookup_url_kwarg='network_id')
+	network = serializers.HyperlinkedRelatedField(view_name='v1:network:network_detail', read_only=True, lookup_url_kwarg='network_id')
 
 	class Meta:
 		model = User
-		fields = ('self', 'username', 'email', 'profile')
+		fields = ('self', 'username', 'email', 'profile', 'network')
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
