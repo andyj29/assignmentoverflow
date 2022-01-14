@@ -73,9 +73,7 @@ class AcceptRequestView(views.APIView):
 		sender_username = self.kwargs['sender_username']
 		if sender_username is not None:
 			sender = get_object_or_404(User, username=sender_username)
-			print(sender)
 			request = ConnectRequest.objects.filter(sender=sender, receiver=self.request.user, is_active=True).first()
-			print(request)
 			request.accept()
 			request.is_active = False
 			request.save()
