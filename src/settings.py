@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'src.apps.authentication',
     'src.apps.resources.profiles',
     'src.apps.resources.posts',
-    'src.apps.websocketchat',
+    'src.apps.chat',
     'src.apps.networking',
 
 ]

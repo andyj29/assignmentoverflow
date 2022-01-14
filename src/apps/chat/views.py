@@ -13,14 +13,15 @@ class ChatSessionListView(generics.ListCreateAPIView):
 	def get_queryset(self):
 		return ChatSession.objects.filter(Q(initiator=self.request.user) | Q(receiver=self.request.user))
 
-	def perform_create(self, serializer):
-		receiver_username = self.request.data['username']
-		receiver = get_object_or_404(User, username=receiver_username)
-		chat_session = ChatSession.objects.filter(Q(initiator=self.request.user, receiver=receiver) | Q(initiator=receiver, receiver=self.request.user))
-		if chat_session.exists():
-			return redirect('v1:chat:chat_session_detail', session_id=chat_session[0].pk)
-		else:
-			serializer.save(initiator=self.request.user, receiver=receiver)
+	def post(self, request, *args, **kwargs):
+		receiver = get_object_or_404(User, username=self.request.data['username'])
+		chat_sessions = ChatSession.objects.filter(Q(initiator=self.request.user, receiver=receiver) | Q(initiator=receiver, receiver=self.request.user))
+		chat_session = chat_sessions.first()
+		if chat_session is None:
+			serializer = ChatSessionSerializer(data=self.request.data)
+			if serializer.is_valid():
+				chat_session = serializer.save(initiator=self.request.user, receiver=receiver)
+		return redirect('v1:chat:chat_session_detail', session_id=chat_session.id)
 
 
 class ChatSessionDetailView(generics.RetrieveAPIView):

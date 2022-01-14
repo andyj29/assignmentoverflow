@@ -28,9 +28,6 @@ class MyConnectRequestListView(generics.ListAPIView):
 		queryset = ConnectRequest.objects.filter(sender=self.request.user)
 		return queryset
 
-	def perform_create(self, serializer):
-		serializer.save(sender=self.request.user)
-
 
 class MyConnectInviteListView(generics.ListAPIView):
 	permission_classes = (permissions.IsAuthenticated,)

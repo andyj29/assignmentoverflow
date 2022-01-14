@@ -4,6 +4,7 @@ from .models import Network, ConnectRequest, ConnectNotification
 
 class NetworkSerializer(serializers.ModelSerializer):
 	user = serializers.HyperlinkedIdentityField(view_name='v1:auth:user_detail', lookup_url_kwarg='user_id')
+	connections = serializers.HyperlinkedRelatedField(view_name='v1:auth:user_detail', lookup_url_kwarg='user_id', read_only=True, many=True)
 	class Meta:
 		model = Network
 		fields = ('__all__')
@@ -18,7 +19,7 @@ class ConnectRequestSerializer(serializers.ModelSerializer):
 
 
 class ConnectNotificationSerializer(serializers.ModelSerializer):
-
+	
 	class Meta:
 		model = ConnectNotification
 		fields = ('__all__')
