@@ -49,7 +49,7 @@ class SendRequestView(views.APIView):
 		if receiver_username is not None:
 			receiver = get_object_or_404(User, username=receiver_username)
 			request = ConnectRequest.objects.create(sender=self.request.user, receiver=receiver)
-			notification = ConnectNotification.objects.create(type='connect request', receiver=receiver, initiated_by=self.request.user)
+			notification = ConnectNotification.objects.create(type='connect-request', receiver=receiver, initiated_by=self.request.user)
 			channel_layer = get_channel_layer()
 			channel = f'notifications_{receiver.username}'
 			async_to_sync(channel_layer.group_send)(
