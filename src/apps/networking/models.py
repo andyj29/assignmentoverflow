@@ -63,4 +63,6 @@ class ConnectNotification(models.Model):
 	initiated_by = models.ForeignKey('authentication.User', on_delete=models.CASCADE)
 	timestamp = models.DateTimeField(auto_now_add=True)
 
+	def __str__(self):
+		return str(self.timestamp)
 

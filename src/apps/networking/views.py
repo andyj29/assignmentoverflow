@@ -73,12 +73,13 @@ class AcceptRequestView(views.APIView):
 		sender_username = self.kwargs['sender_username']
 		if sender_username is not None:
 			sender = get_object_or_404(User, username=sender_username)
-			request = ConnectRequest.objects.filter(sender=sender, receiver=request.user, is_active=True).first()
+			print(sender)
+			request = ConnectRequest.objects.filter(sender=sender, receiver=self.request.user, is_active=True).first()
+			print(request)
 			request.accept()
 			request.is_active = False
 			request.save()
-			Network
-			ConnectNotification.objects.filter(receiver=request.user, initiated_by=sender).delete()
+			ConnectNotification.objects.filter(receiver=self.request.user, initiated_by=sender).delete()
 			data = {
 				'status': True,
 				'message': 'Success'
