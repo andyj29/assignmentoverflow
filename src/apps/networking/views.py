@@ -55,10 +55,10 @@ class SendRequestView(views.APIView):
 			async_to_sync(channel_layer.group_send)(
 				channel, {
 					'type': 'notify',
-					'command': 'new_notification',
 					'notification': json.dumps(ConnectNotificationSerializer(notification).data, cls=DjangoJSONEncoder),
 				}
 			)
+			print(json.dumps(ConnectNotificationSerializer(notification).data, cls=DjangoJSONEncoder))
 			data = {
 				'status': True,
 				'message': 'Success',
