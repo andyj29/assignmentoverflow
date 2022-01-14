@@ -4,7 +4,7 @@
 ##### 👉 HATEOAS driven REST APIs
 ##### 👉 Real time chat application
 ##### 👉 Real time notifications ( new chat messages, connect requests, questions get answered)
-##### 👉 AES256 encrypted message
+##### 👉 AES256 encrypted messages
 #### Stack:
 ##### 👉 Django
 ##### 👉 Django Rest Framework
