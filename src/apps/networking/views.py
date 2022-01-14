@@ -56,7 +56,7 @@ class MyConnectRequestListCreateView(generics.ListCreateAPIView):
 		return JsonResponse(data)
 
 
-class MyConnectInviteListAcceptView(generics.ListCreateAPIView):
+class MyConnectInviteListAcceptDeclineView(generics.ListAPIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	serializer_class = ConnectRequestSerializer
 
@@ -67,10 +67,23 @@ class MyConnectInviteListAcceptView(generics.ListCreateAPIView):
 	def post(self, request, *args, **kwargs):
 		sender = get_object_or_404(User, username=self.request.data['username'])
 		request = ConnectRequest.objects.filter(sender=sender, receiver=self.request.user, is_active=True).first()
-		request.accept()
+		type = self.request.data['type']
+		if type == 'accept':
+			request.accept()
+			data = {
+				'status': 'Success',
+				'message': 'Invite has been accepted',
+			}
+		elif type == 'decline':
+			request.decline()
+			data = {
+				'status': 'Success',
+				'message': 'Invite has been declined',
+			}
+		else:
+			data = {
+				'status': 'Failed',
+				'message': 'Please provide request type (\'accept\' or \'decline\')',
+			}
 		ConnectNotification.objects.filter(receiver=self.request.user, initiated_by=sender).delete()
-		data = {
-			'status': 'Success',
-			'message': 'Invite has been accepted',
-		}
 		return JsonResponse(data)
