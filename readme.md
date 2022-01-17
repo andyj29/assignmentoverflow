@@ -6,11 +6,6 @@
 ##### 👉 Real time notifications ( new chat messages, connect requests, questions get answered)
 ##### 👉 AES256 encrypted messages
 #### Stack:
-#### -- Frontend --
-##### 👉 React
-##### 👉 Axios
-##### 👉 Semantic UI
-#### -- Backend --
 ##### 👉 Django
 ##### 👉 Django Rest Framework
 ##### 👉 Django Channels
