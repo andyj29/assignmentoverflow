@@ -7,8 +7,10 @@ from django.core.serializers.json import DjangoJSONEncoder
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from src.apps.authentication.models import User
-from .serializers import NetworkSerializer, ConnectRequestSerializer, ConnectNotificationSerializer
-from .models import Network, ConnectRequest, ConnectNotification
+from .serializers import NetworkSerializer, ConnectRequestSerializer
+from .models import Network, ConnectRequest
+from src.apps.notifications.models import Notification
+from src.apps.notifications.serializers import NotificationSerializer
 
 
 class MyNetworkDetailView(generics.RetrieveAPIView):
@@ -40,13 +42,13 @@ class MyConnectRequestListCreateView(generics.ListCreateAPIView):
 	def post(self, request, *args, **kwargs):
 		receiver = get_object_or_404(User, username=self.request.data['username'])
 		request = ConnectRequest.objects.create(sender=self.request.user, receiver=receiver)
-		notification = ConnectNotification.objects.create(type='connect-request', receiver=receiver, initiated_by=self.request.user)
+		notification = Notification.objects.create(type='connect-request', receiver=receiver, initiated_by=self.request.user)
 		channel_layer = get_channel_layer()
 		receiver_group = f'notifications_{receiver.username}'
 		async_to_sync(channel_layer.group_send)(
 			receiver_group, {
 				'type': 'notify',
-				'notification': json.dumps(ConnectNotificationSerializer(notification).data,cls=DjangoJSONEncoder),
+				'notification': json.dumps(NotificationSerializer(notification).data,cls=DjangoJSONEncoder),
 			}
 		)
 		data = {
@@ -80,5 +82,6 @@ class MyConnectInviteListAcceptDeclineView(generics.ListAPIView):
 				'status': 'Success',
 				'message': 'Invite has been declined',
 			}
-		ConnectNotification.objects.filter(receiver=self.request.user, initiated_by=sender).delete()
+		Notification.objects.filter(receiver=self.request.user, initiated_by=sender).delete()
+
 		return JsonResponse(data)

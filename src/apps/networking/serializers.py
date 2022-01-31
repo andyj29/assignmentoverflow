@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Network, ConnectRequest, ConnectNotification
+from .models import Network, ConnectRequest
 
 
 class NetworkSerializer(serializers.ModelSerializer):
@@ -18,8 +18,3 @@ class ConnectRequestSerializer(serializers.ModelSerializer):
 		fields = ('__all__')
 
 
-class ConnectNotificationSerializer(serializers.ModelSerializer):
-	
-	class Meta:
-		model = ConnectNotification
-		fields = ('__all__')

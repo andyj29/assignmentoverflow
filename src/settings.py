@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'src.apps.resources.posts',
     'src.apps.chat',
     'src.apps.networking',
+    'src.apps.notifications',
 
 ]
 
