@@ -1,4 +1,4 @@
-### Backend service for Assignment Overflow - a QnA website inspired by Stack Overflow for software engineering student at Seneca College
+### Backend service for Assignment Overflow - a QnA website inspired by Stack Overflow
 ### Features:
 ✔️  HATEOAS driven REST APIs
 
