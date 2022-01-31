@@ -80,10 +80,5 @@ class MyConnectInviteListAcceptDeclineView(generics.ListAPIView):
 				'status': 'Success',
 				'message': 'Invite has been declined',
 			}
-		else:
-			data = {
-				'status': 'Failed',
-				'message': 'Please provide request type (\'accept\' or \'decline\')',
-			}
 		ConnectNotification.objects.filter(receiver=self.request.user, initiated_by=sender).delete()
 		return JsonResponse(data)
