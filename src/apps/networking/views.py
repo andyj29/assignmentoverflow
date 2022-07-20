@@ -40,7 +40,7 @@ class MyConnectRequestListCreateView(generics.ListCreateAPIView):
 		return queryset
 
 	def post(self, request, *args, **kwargs):
-		receiver = get_object_or_404(User, username=self.request.data['username'])
+		receiver = get_object_or_404(User, username=self.request.data.get('receiver_username'))
 		request = ConnectRequest.objects.create(sender=self.request.user, receiver=receiver)
 		notification = Notification.objects.create(type='connect-request', receiver=receiver, initiated_by=self.request.user)
 		channel_layer = get_channel_layer()
@@ -67,9 +67,9 @@ class MyConnectInviteListAcceptDeclineView(generics.ListAPIView):
 		return queryset
 
 	def post(self, request, *args, **kwargs):
-		sender = get_object_or_404(User, username=self.request.data['username'])
+		sender = get_object_or_404(User, username=self.request.data.get('sender_username'))
 		request = ConnectRequest.objects.filter(sender=sender, receiver=self.request.user, is_active=True).first()
-		type = self.request.data['type']
+		type = self.request.data.get('type')
 		if type == 'accept':
 			request.accept()
 			data = {

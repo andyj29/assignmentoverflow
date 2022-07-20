@@ -14,7 +14,7 @@ class ChatSessionListView(generics.ListCreateAPIView):
 		return ChatSession.objects.filter(Q(initiator=self.request.user) | Q(receiver=self.request.user))
 
 	def post(self, request, *args, **kwargs):
-		receiver = get_object_or_404(User, username=self.request.data['username'])
+		receiver = get_object_or_404(User, username=self.request.data.get('receiver_username'))
 		chat_sessions = ChatSession.objects.filter(Q(initiator=self.request.user, receiver=receiver) | Q(initiator=receiver, receiver=self.request.user))
 		chat_session = chat_sessions.first()
 		if chat_session is None:
